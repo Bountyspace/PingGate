@@ -1,0 +1,14 @@
+#!bin/bash
+
+
+echo "18" > /sys/class/gpio/export 2> /dev/null && echo "<--------------------Exporting GPIO18-------------------->" || echo "<------------------(GPIO Already Exported!)----------------->"
+sleep 6
+echo "out" > /sys/class/gpio/gpio18/direction && echo "<--------------------Direction Set: Out -------------------->"
+sleep 1
+echo "<----------------------Starting Pings----------------------->"
+sleep 1
+
+
+
+
+
