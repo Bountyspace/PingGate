@@ -1,0 +1,17 @@
+#!bin/bash
+
+read -e -p "Enter a pin number:" PIN_NUM
+sleep 1
+echo "Exporting pin $PIN_NUM."
+sleep 1
+echo "$PIN_NUM" > /sys/class/gpio/export 2> /dev/null && echo "Success!" || echo "Failed! Pin already exported?"
+sleep 1
+read -e -p "What direction? Either 'in' or 'out':" PIN_DIR
+sleep 1
+echo "$PIN_DIR" > /sys/class/gpio/gpio$PIN_NUM/direction && echo "Direction set to $PIN_DIR."
+sleep 1
+read -e -p "What pin value? Either '0' or '1':" PIN_VAL
+sleep 1
+echo "$PIN_VAL" > /sys/class/gpio/gpio$PIN_NUM/value && echo "Value set to $PIN_VAL"
+sleep 1
+echo "All done!"
