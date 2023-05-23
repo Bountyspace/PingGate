@@ -7,20 +7,19 @@ echo "██╔═══╝ ██║██║╚██╗██║██║   �
 echo "██║     ██║██║ ╚████║╚██████╔╝    ╚██████╔╝██║  ██║   ██║   ███████╗"
 echo "╚═╝     ╚═╝╚═╝  ╚═══╝ ╚═════╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝"
 
-test -d /sys/class/gpio/gpio18
-if [[ $? = 1 ]]; then
-	echo "gpio18 not found, creating..."
-	echo "18" > /sys/class/gpio/export
-	sleep 2
-	echo "out" > /sys/class/gpio/gpio18/direction
-	echo "0" > /sys/class/gpio/gpio18/value
+if [ ! -d "/sys/class/gpio/gpio18" ]; then
+        echo "gpio18 not found, creating..."
+        echo "18" > /sys/class/gpio/export
+        sleep 2
+        echo "out" > /sys/class/gpio/gpio18/direction
+        echo "0" > /sys/class/gpio/gpio18/value
 else
-	echo "gpio18 found, continuing..."
+        echo "gpio18 found, continuing..."
 fi
 
 
-test -f /home/pi/Desktop/inet.txt
-if [[ $? = 1 ]]; then
+
+if [ ! -f /home/pi/Desktop/inet.txt ]; then
 	touch inet.txt /home/pi/Desktop/
 	echo "0" > /home/pi/Desktop/inet.txt
 	echo "inet file created..."
@@ -52,33 +51,55 @@ ping -c 1 1.1.1.1 | grep "64 bytes" || (( d++ ))
 echo $d
 sleep 1
 
-echo "gpio18 value: $pin_val"
-echo "inet value : $inet"
+
+
 
 if [[ $a = 1 && $b = 1 && $c = 1 && $d = 1 && $inet = 0 ]]; then
 
-	echo "<----------------Ping fail!---------------->"
-        echo "<--------------(Gate Opening)-------------->"
+	echo "Pings failed"
+        echo "(Gate Opening)"
         echo "1" > /sys/class/gpio/gpio18/value
         echo "1" > /home/pi/Desktop/inet.txt
+	echo "gpio18 value: $pin_val"
+	echo "inet value : $inet"
 
 elif [[ $a = 1 && $b = 1 && $c = 1 && $d = 1 && $inet = 1 && $pin_val = 1 ]]; then
 	echo "internet down, gate up"
+	echo "gpio18 value: $pin_val"
+	echo "inet value : $inet"
 
 elif [[ $a = 1 && $b = 1 && $c = 1 && $d = 1 && $inet = 1 && $pin_val = 0 ]]; then
-	echo "internet down, gate not up, opening gate"
+	echo "internet down, gate not up"
+	echo "Opening Gate)"
 	echo "1" > /sys/class/gpio/gpio18/value
+	echo "gpio18 value: $pin_val"
+	echo "inet value : $inet"
 
-elif [[ $a = 0 && $b = 0 && $c = 0 && $d = 0 && $inet = 0 && $pin_val = 0 || 1 ]]; then
+elif [[ $a = 0 && $b = 0 && $c = 0 && $d = 0 && $inet = 0 && $pin_val = 0 ]]; then
 
-	echo "<--------------------Not a total fail!------------------>"
-	echo "<----------------------(Gate Normal)-------------------->"
+	echo "Gate Normal"
+	echo "gpio18 value: $pin_val"
+	echo "inet value : $inet"
+
+elif [[ $a = 0 && $b = 0 && $c = 0 && $d = 0 && $inet = 0 && $pin_val = 1 ]]; then
+
+        echo "internet up, gate open"
+        echo "gpio18 value: $pin_val"
+        echo "inet value : $inet"
 
 elif [[ $a = 0 && $b = 0 && $c = 0 && $d = 0 && $inet = 1 && $pin_val = 1 ]]; then
 
-	echo "<--------------------Connection Restored!---------------->"
-        echo "<----------------------(Gate Closing)-------------------->"
+	echo "Connection Restored"
+        echo "Gate Closing"
 	echo "0" > /sys/class/gpio/gpio18/value
 	echo "0" > /home/pi/Desktop/inet.txt
+	echo "gpio18 value: $pin_val"
+	echo "inet value : $inet"
 
 fi
+
+#sleep 2
+
+#echo "gpio18 value: $pin_val"
+#echo "inet value : $inet"
+
